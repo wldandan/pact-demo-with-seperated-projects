@@ -1,0 +1,7 @@
+require 'pact_broker/client/tasks'
+
+PactBroker::Client::PublicationTask.new do | task |
+  task.consumer_version = "0.1.1"
+  task.pact_broker_base_url = "http://localhost:8888"
+  task.pattern = "target/pacts/*.json"
+end

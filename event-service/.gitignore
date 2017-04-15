@@ -1,0 +1,11 @@
+*.ipr
+*.iws
+*.iml
+.gradle
+out
+target
+build
+.DS_Store
+*/.DS_Store
+event-consumer-version
+
