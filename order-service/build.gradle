@@ -1,0 +1,73 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.0.RELEASE'
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath('com.github.jengelman.gradle.plugins:gradle-processes:0.3.0')
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'au.com.dius:pact-jvm-provider-gradle_2.11:3.2.4'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'au.com.dius.pact'
+apply plugin: 'com.github.johnrengelman.processes'
+
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+ext {
+    pactFilePath = "$System.env.PACT_FILE"
+}
+
+jar {
+    version = '0.0.2'
+    baseName = 'order-service'
+}
+
+repositories {
+    mavenCentral()
+}
+
+task startProvider(type: com.github.jengelman.gradle.plugins.processes.tasks.JavaFork) {
+    classpath = files("microservices-pact-provider/build/libs/microservices-pact-provider-${version}.jar")
+    classpath += sourceSets.main.runtimeClasspath
+    main = 'com.microservice.trainning.Application'
+    doLast {
+        Thread.sleep(10000)
+    }
+}
+
+task stopProvider << {
+    startProvider.processHandle.abort()
+}
+
+pact {
+    serviceProviders {
+        orderProvider {
+            startProviderTask = 'startProvider'
+            terminateProviderTask = 'stopProvider'
+            // hasPactsFromPactBroker('http://localhost:8888/')
+            hasPactWith('orderConsumer') {
+                pactFile = file(pactFilePath)
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
