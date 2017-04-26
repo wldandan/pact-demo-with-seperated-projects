@@ -5,18 +5,21 @@
 * order-consumer作为消费者，使用order-service提供的数据
 * order-service作为提供者，提供数据给order-consumer
 
-#### 运行如下命令，演示整个流程
+#### 运行如下命令，演示消费者契约的生成和验证提供者的流程
 ```
 ./run_pact.sh
 ```
 
-#### 基于Pact，先生成契约文件
+
+#### 或者手动执行
+
+##### 消费者生成契约
 ```
 $  cd order-consumer
 $  ./gradlew test
 ```
 
-#### 使用契约文件，验证提供者
+#### 使用契约验证提供者
 
 ```
 $ cd order-service
