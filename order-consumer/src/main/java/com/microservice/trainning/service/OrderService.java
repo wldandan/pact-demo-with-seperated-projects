@@ -28,9 +28,7 @@ public class OrderService {
     }
 
     public List<Order> getOrders(){
-//        ArrayList<Order> orders = new ArrayList<Order>();
-        List<Order> orders = getRemoteOrders();
-        return orders;
+        return getRemoteOrders();
     }
 
     private List<Order> getRemoteOrders() {

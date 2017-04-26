@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -19,9 +18,7 @@ public class OrderServiceTest {
     @Rule
     public PactRule rule = new PactRule("localhost", 8080, this);
 
-    OrderService orderClient = new OrderService("http://localhost:8080");
-
-    List<Order> orderResults = Arrays.asList(new Order(24), new Order(50));
+    OrderService orderService = new OrderService("http://localhost:8080");
 
     private static Map<String, String> getHTTPHeaders(){
         Map<String, String> headers = new HashMap<>();
@@ -38,31 +35,37 @@ public class OrderServiceTest {
                 .willRespondWith()
                 .headers(getHTTPHeaders())
                 .status(200)
-                .body("[{\"id\":24,\"title\":\"The order is created with ID [24]\"}, {\"id\":50,\"title\":\"The order is created with ID [50] \"}]").toFragment();
+                .body("[{\"id\":36,\"title\":\"The order is created with ID [36]\"}, {\"id\":50,\"title\":\"The order is created with ID [50]\"}]").toFragment();
     }
 
     @Pact(state="WhenOneOrderExists", provider="orderProvider", consumer="orderConsumer")
     public PactFragment createOrderFragment(ConsumerPactBuilder.PactDslWithProvider.PactDslWithState builder) {
-        return builder.uponReceiving("a request to get order with id 24")
-                .path("/orders/24")
+
+        PactDslJsonBody body = new PactDslJsonBody()
+                .integerType("id",36)
+                .stringValue("title","The order is created with ID [36]")
+                .asBody();
+
+        return builder.uponReceiving("a request to get one order with id 36")
+                .path("/orders/36")
                 .method("GET")
                 .willRespondWith()
                 .headers(getHTTPHeaders())
                 .status(200)
-                .body("{\"id\":24,\"title\":\"The order is created with ID [24]\"}").toFragment();
+                .body(body).toFragment();
     }
 
     @Test
     @PactVerification("WhenOrdersAvailable")
     public void testGetOrders() {
-        assertEquals(orderClient.getOrders(),
-                     Arrays.asList(new Order(24),
+        assertEquals(orderService.getOrders(),
+                     Arrays.asList(new Order(36),
                                    new Order(50)));
     }
 
     @Test
     @PactVerification("WhenOneOrderExists")
     public void testOneOrderExist() {
-        assertEquals(orderClient.getOrder(24), new Order(24));
+        assertEquals(orderService.getOrder(36), new Order(36));
     }
 }
