@@ -7,7 +7,7 @@ public class Order {
 
     public Order(int id){
         this.id = id;
-        this.title = "order " + id;
+        this.title = "The order is created with ID [" + id + "]";
     }
 
     public Order(int id, String title) {

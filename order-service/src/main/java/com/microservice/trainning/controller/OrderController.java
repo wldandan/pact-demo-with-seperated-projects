@@ -16,7 +16,7 @@ public class OrderController {
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ResponseEntity<List<Order>> orders() {
-        return new ResponseEntity<>(Arrays.asList(new Order(24), new Order(50)), HttpStatus.OK);
+        return new ResponseEntity<>(Arrays.asList(new Order(36), new Order(50)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
